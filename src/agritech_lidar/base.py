@@ -34,6 +34,6 @@ class LiDARData:
         return self.map[str(classification)]
     
     def get_area_names(self):
-        with open("./filenames.txt") as f:
+        with open(f"{__name__.split('.')[0]}/filenames.txt") as f:
             names = f.readlines()
             self.area_names = names
