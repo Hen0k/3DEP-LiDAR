@@ -1,5 +1,8 @@
 class LiDARData:
-    
+    """
+    A base class for modeling 
+    """
+
     def __init__(self) -> None:
         self.map = {
             "0": "Never classified",
@@ -24,6 +27,13 @@ class LiDARData:
             "19-63": "Reserved",
             "64-255": "User Definable"
         }
+        self.data_location = "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/"
+        self.get_area_names()
 
-    def map_point_class(self, classification) -> str:
+    def map_point_class(self, classification: str) -> str:
         return self.map[str(classification)]
+    
+    def get_area_names(self):
+        with open("./filenames.txt") as f:
+            names = f.readlines()
+            self.area_names = names
