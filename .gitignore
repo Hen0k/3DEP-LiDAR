@@ -127,3 +127,15 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+data/*
+
+*/*.egg-info
+
+*.ipynb_checkpoints
+
+pipeline.json
+src/agritech_lidar/pipeline.json
+test.py
+
+.gitignore
