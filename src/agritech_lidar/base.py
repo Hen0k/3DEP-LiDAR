@@ -1,3 +1,6 @@
+import os
+
+
 class LiDARData:
     """
     A base class for modeling 
@@ -15,15 +18,15 @@ class LiDARData:
             "7": "Low Point",
             "8": "Reserved",
             "9": "Water",
-            "10":" Rail",
-            "11":" Road Surface",
-            "12":" Reserved",
-            "13":" Wire - Guard (Shield)",
-            "14":" Wire - Conductor (Phase)",
-            "15":" Transmission Tower",
-            "16":" Wire-Structure Connector (Insulator)",
-            "17":" Bridge Deck",
-            "18":" High Noise",
+            "10": " Rail",
+            "11": " Road Surface",
+            "12": " Reserved",
+            "13": " Wire - Guard (Shield)",
+            "14": " Wire - Conductor (Phase)",
+            "15": " Transmission Tower",
+            "16": " Wire-Structure Connector (Insulator)",
+            "17": " Bridge Deck",
+            "18": " High Noise",
             "19-63": "Reserved",
             "64-255": "User Definable"
         }
@@ -32,8 +35,10 @@ class LiDARData:
 
     def map_point_class(self, classification: str) -> str:
         return self.map[str(classification)]
-    
+
     def get_area_names(self):
-        with open(f"{__name__.split('.')[0]}/filenames.txt") as f:
+        with open(os.path.join(os.path.dirname(__file__),
+                               "data",
+                               "filenames.txt")) as f:
             names = f.readlines()
             self.area_names = names
