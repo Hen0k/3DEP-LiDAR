@@ -64,7 +64,7 @@ class DataGetter(LiDARData):
         if self.area_name and self.area_name in self.area_names:
             return True
         print(f"{self.area_name} not found")
-        pprint(self.area_names)
+        # pprint(self.area_names)
         return False
 
     def check_inclusion(self):
@@ -78,13 +78,16 @@ class DataGetter(LiDARData):
                 (variant['xmax'], variant['ymax']),
                 (variant['xmax'], variant['ymin']),
             ])], columns=['geometry'])
-            print("BIG")
-            print(big_area.geometry[0])
-            print("SMALL")
-            print(self.small_rect.geometry[0])
+            # print("BIG")
+            # print(big_area.geometry[0])
+            # print("SMALL")
+            # print(self.small_rect.geometry[0])
             containes = big_area.geometry[0].contains(
                 self.small_rect.geometry[0])
             if containes:
+                # big_area.plot()
+                # self.small_rect.plot()
+                # plt.show()
                 return variant['folder_name']
         big_area.plot()
         self.small_rect.plot()
@@ -109,16 +112,17 @@ class DataGetter(LiDARData):
         if folder_name:
             json_pipeline_template = [
                 {
+                    "threads": 8, 
                     "type": "readers.ept",
                     "filename": f"{self.data_location}{folder_name}ept.json",
                 }
             ]
             
-            # if boundary_filter:
-            #     json_pipeline_template[0] = {
-            #         **json_pipeline_template[0],
-            #         **boundary_filter
-            #     }
+            if boundary_filter:
+                json_pipeline_template[0] = {
+                    **json_pipeline_template[0],
+                    **boundary_filter
+                }
             points_filter_stage = self.create_point_filter()
             if points_filter_stage:
                 json_pipeline_template.append(points_filter_stage)
@@ -126,6 +130,7 @@ class DataGetter(LiDARData):
                 "type": "writers.las",
                 "filename": self.ouput_path
             })
+            print(json_pipeline_template)
             self.pipeline = pdal.Pipeline(json.dumps(json_pipeline_template))
             return self.pipeline
 
@@ -180,22 +185,22 @@ class DataGetter(LiDARData):
 
 
 if __name__ == "__main__":
-    getter = DataGetter(area_name='AK_NorthSlope_B6',
-                        boundaries=Polygon([(
+    getter = DataGetter(area_name='USGS_LPC_TX_South_B8_2018_LAS',
+                        boundaries=Polygon([
                             # (xmin, ymin)
-                            -16750308, 11050000),
+                            (-10880908.0, 3040000),
                             # (xmin, ymax)
-                            (-16750308, 11202063),
+                            (-10880908.0, 3045000),
                             # (xmax, ymax)
-                            (-16704630, 11202063),
+                            (-10880830.0, 3045000),
                             # (xmax, ymin)
-                            (-16704630, 11050000),
+                            (-10880830.0, 3040000),
                         ]),
-                        # point_types=['Ground', 'Water'],
-                        ouput_path="output/alask_ground.las"
+                        point_types=['Ground', 'Water'],
+                        ouput_path="output/USGS_LPC_TX_South_B8_2018_LAS.las"
                         )
     pipeline = getter.build_pipeline()
-    print(pipeline)
+    # print(pipeline)
     output = getter.execute()
     print(f"output: {output}")
     print(getter.pipeline.arrays[0])
