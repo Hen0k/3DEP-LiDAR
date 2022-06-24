@@ -42,7 +42,7 @@ class LiDARData:
         self.areas_metadata = pd.read_csv("data/areas_metadata.csv")
 
     def get_area_names(self):
-        self.area_names = self.areas_metadata['area_name'].to_list()
+        self.area_names = self.areas_metadata['area_name'].values
 
 
     def get_area_boundary(self, area_name: str):
