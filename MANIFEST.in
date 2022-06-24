@@ -1,2 +1,3 @@
-include
-src/agritech_lidar/data/filenames.txt
+include src/agritech_lidar/data/filenames.txt
+include src/agritech_lidar/data/areas_metadata.json
+include src/agritech_lidar/data/areas_metadata.csv
