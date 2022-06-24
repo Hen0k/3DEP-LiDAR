@@ -3,9 +3,7 @@ import pdal
 import geopandas as gpd
 import matplotlib.pyplot as plt
 from shapely.geometry import Polygon
-from shapely.geometry import Point
 from agritech_lidar.base import LiDARData
-from agritech_lidar.rotating_logs import get_rotating_log
 from pprint import pprint
 
 
@@ -47,7 +45,7 @@ class DataGetter(LiDARData):
                  point_types: list[str] = None,
                  intensity_threshold: float = None,
                  output_crs: str = None,
-                 ouput_path: str = None,
+                 ouput_path: str = "",
                  raw_pipeline_json: list[dict] = None
                  ) -> None:
 
@@ -69,8 +67,8 @@ class DataGetter(LiDARData):
 
     def check_inclusion(self):
         area_variants = self.get_area_variants()
-        print("Variants")
-        print(area_variants)
+        # print("Variants")
+        # print(area_variants)
         for _, variant in area_variants.iterrows():
             big_area = gpd.GeoDataFrame([Polygon([
                 (variant['xmin'], variant['ymin']),
@@ -89,14 +87,14 @@ class DataGetter(LiDARData):
                 # self.small_rect.plot()
                 # plt.show()
                 return variant['folder_name']
-        big_area.plot()
-        self.small_rect.plot()
-        plt.show()
+        # big_area.plot()
+        # self.small_rect.plot()
+        # plt.show()
         return False
 
     def boundary_within_area(self):
         if self.area_exists():
-            print("Area Does exist")
+            # print("Area Does exist")
             return self.check_inclusion()
         return False
 
@@ -126,11 +124,10 @@ class DataGetter(LiDARData):
             points_filter_stage = self.create_point_filter()
             if points_filter_stage:
                 json_pipeline_template.append(points_filter_stage)
-            json_pipeline_template.append({
-                "type": "writers.las",
-                "filename": self.ouput_path
-            })
-            print(json_pipeline_template)
+            writer_stage = self.create_writer_stage()
+            if writer_stage:
+                json_pipeline_template.append(writer_stage)
+            # print(json_pipeline_template)
             self.pipeline = pdal.Pipeline(json.dumps(json_pipeline_template))
             return self.pipeline
 
@@ -141,6 +138,21 @@ class DataGetter(LiDARData):
 
     def create_intensity_filter(self):
         pass
+
+    def create_writer_stage(self):
+        if self.ouput_path.endswith(".las"):
+            return {
+                "type": "writers.las",
+                "filename": self.ouput_path
+            }
+        elif self.ouput_path.endswith(".tif"):
+            return {
+                "filename": self.ouput_path,
+                "gdaldriver": "GTiff",
+                "output_type": "all",
+                "resolution": "5.0",
+                "type": "writers.gdal"
+            }
 
     def create_point_filter(self):
         if self.point_types:
@@ -180,8 +192,8 @@ class DataGetter(LiDARData):
         with open(raw_pipeline_json, 'r') as f:
             pipeline = pdal.Pipeline(f.read())
             counts = pipeline.execute()
-            print(counts)
-            print(pipeline.arrays)
+            # print(counts)
+            # print(pipeline.arrays)
 
 
 if __name__ == "__main__":
