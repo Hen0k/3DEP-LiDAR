@@ -131,3 +131,5 @@ dmypy.json
 data/*
 
 */*.egg-info
+
+*.ipynb_checkpoints
