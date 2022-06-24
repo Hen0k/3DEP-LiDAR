@@ -28,7 +28,10 @@ async def fetch_json(url, s):
 
 
 def transform(data):
-    folder_name = next(iter(data.keys()))
+    try:
+        folder_name = next(iter(data.keys()))
+    except AttributeError:
+        return 
     area_name, year = folder_name[:-6], folder_name[-5:-1]
     data = data.get(folder_name)
     bounds = data.get('bounds', [])
