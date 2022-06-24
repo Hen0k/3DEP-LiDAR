@@ -114,15 +114,25 @@ class DataGetter(LiDARData):
                 }
             ]
             
-            if boundary_filter:
-                json_pipeline_template[0] = {
-                    **json_pipeline_template[0],
-                    **boundary_filter
-                }
+            # if boundary_filter:
+            #     json_pipeline_template[0] = {
+            #         **json_pipeline_template[0],
+            #         **boundary_filter
+            #     }
             points_filter_stage = self.create_point_filter()
             if points_filter_stage:
                 json_pipeline_template.append(points_filter_stage)
-            return json_pipeline_template
+            json_pipeline_template.append({
+                "type": "writers.las",
+                "filename": self.ouput_path
+            })
+            self.pipeline = pdal.Pipeline(json.dumps(json_pipeline_template))
+            return self.pipeline
+
+    def execute(self):
+        if self.pipeline:
+            output = self.pipeline.execute()
+            return output
 
     def create_intensity_filter(self):
         pass
@@ -143,7 +153,7 @@ class DataGetter(LiDARData):
     def create_boundary_filter(self):
         if self.boundaries:
             xmin, ymin, xmax, ymax = self.get_rect_edges()
-            return {"bound": f"({[xmin, xmax]}, {[ymin, ymax]})"}
+            return {"bounds": f"({[xmin, xmax]}, {[ymin, ymax]})"}
         return {}
 
     def get_rect_edges(self):
@@ -181,8 +191,13 @@ if __name__ == "__main__":
                             # (xmax, ymin)
                             (-16704630, 11050000),
                         ]),
-                        point_types=['Ground', 'Water'],
+                        # point_types=['Ground', 'Water'],
                         ouput_path="output/alask_ground.las"
                         )
     pipeline = getter.build_pipeline()
     print(pipeline)
+    output = getter.execute()
+    print(f"output: {output}")
+    print(getter.pipeline.arrays[0])
+    
+
