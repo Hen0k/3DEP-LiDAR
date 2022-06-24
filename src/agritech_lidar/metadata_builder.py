@@ -66,16 +66,21 @@ if __name__ == '__main__':
     urls = generate_links()
 
     results = []
-    for slice_idx in range(0, len(urls), 20):
-        result = asyncio.run(main(urls[slice_idx:slice_idx+20]))
+    jump=50
+    for slice_idx in range(0, len(urls), jump):
+        result = asyncio.run(main(urls[slice_idx:slice_idx+jump]))
         results += result
-
+        if len(results)%jump*5 == 0:
+            print(f"Reached at {len(results)}")
+    
+    results = list(filter(lambda e: e!=None, results))
+    print(f"Final list length: {len(results)}")
     output_path = "data/areas_metadata.json"
     with open(output_path, 'w') as f:
         json.dump(results, f, indent=4)
         print("Successfully built a JSON format metadata for the dataset")
     df = pd.read_json("data/areas_metadata.json")
-    # print(df.head())
+    
     df.to_csv(output_path.replace(".json", ".csv"))
     print("Successfully built a CSV format metadata for the dataset")
     finish_time = datetime.datetime.now() - start_time
