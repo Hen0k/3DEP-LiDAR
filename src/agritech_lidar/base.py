@@ -39,7 +39,10 @@ class LiDARData:
         return self.map[classification]
 
     def get_areas_metadata(self):
-        self.areas_metadata = pd.read_csv("data/areas_metadata.csv")
+        csv_path = os.path.join(os.path.dirname(__file__),
+                               "data",
+                               "areas_metadata.csv")
+        self.areas_metadata = pd.read_csv(csv_path)
 
     def get_area_names(self):
         self.area_names = self.areas_metadata['area_name'].values
