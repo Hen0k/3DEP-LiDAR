@@ -1,8 +1,9 @@
 import json
 import pdal
 import geopandas as gpd
+import laspy
 import matplotlib.pyplot as plt
-from shapely.geometry import Polygon
+from shapely.geometry import Polygon, Point
 from agritech_lidar.base import LiDARData
 from pprint import pprint
 
@@ -135,6 +136,19 @@ class DataGetter(LiDARData):
         if self.pipeline:
             output = self.pipeline.execute()
             return output
+    
+    def get_geodf(self):
+        # Load the outputed data
+        las = laspy.read(self.ouput_path)
+        # collect points
+        geometry = [Point((x, y)) for x, y in zip(las.x.array, las.y.array)]
+
+        self.geo_df = gpd.GeoDataFrame(columns=["elevation", "geometry"])
+        self.geo_df['geometry'] = geometry
+        self.geo_df['elevation'] = las.z.array
+        return self.geo_df
+        
+
 
     def create_intensity_filter(self):
         pass
