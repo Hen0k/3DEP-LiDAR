@@ -4,7 +4,8 @@ import pandas as pd
 
 class LiDARData:
     """
-    A base class for modeling 
+    A base class for modeling the lidar data with basic properties and 
+    access methods.
     """
 
     def __init__(self) -> None:
@@ -36,15 +37,35 @@ class LiDARData:
         self.get_area_names()
 
     def map_point_class(self, classification: str) -> str:
+        """
+        Convert's users input of a point class type to an index used internally.
+        
+        Parameters
+        ----------
+        `classification`: str
+            The point class name that is requested.
+        
+        Returns
+        -------
+        str
+            An index that represents the name 
+        """
         return self.map[classification]
 
     def get_areas_metadata(self):
+        """
+        Load the metadata csv shipped with the package and make it a class attribute
+        It is run once in the `__init__` method.
+        """
         csv_path = os.path.join(os.path.dirname(__file__),
                                "data",
                                "areas_metadata.csv")
         self.areas_metadata = pd.read_csv(csv_path)
 
     def get_area_names(self):
+        """
+        Fetch full folder name for a given area. 
+        """
         self.area_names = self.areas_metadata['area_name'].values
 
 
