@@ -15,6 +15,8 @@ These metadata fields were:
 
 I then saved the extracted metadata as a CSV and JSON formated file.
 """
+__docformat__ = "numpy"
+
 from requests_html import AsyncHTMLSession
 import datetime
 import asyncio
