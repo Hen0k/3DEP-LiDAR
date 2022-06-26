@@ -18,12 +18,17 @@ Water is very important for crop growth and health.  We can better predict maize
 
 ## Installation Instructions
 1. Clone the repo
+   
    ```bash
    git clone https://github.com/Hen0k/lidar_point_cloud.git
+   ```
    or
+   ```bash
    git clone git@github.com:Hen0k/lidar_point_cloud.git
    ```
+
 2. run the following
+   
    ```bash
    cd lidar_point_cloud
    pip install .
