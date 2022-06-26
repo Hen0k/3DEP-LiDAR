@@ -2,6 +2,8 @@ import os
 import requests
 import pandas as pd
 
+__docformat__ = "numpy"
+
 class LiDARData:
     """
     A base class for modeling the lidar data with basic properties and 
